@@ -326,11 +326,11 @@ config SUSPEND_TIME
 	  keeps statistics on the time spent in suspend in
 	  /sys/kernel/debug/suspend_time
 
-<<<<<<< HEAD
+
 config DEDUCE_WAKEUP_REASONS
 	bool
 	default n
-=======
+
 config QUICK_WAKEUP
 	bool "Quick wakeup"
 	depends on SUSPEND
@@ -338,5 +338,4 @@ config QUICK_WAKEUP
 	---help---
 	  Allow kernel driver to do periodic jobs without resuming the full system
 	  This option can increase battery life on android powered smartphone.
-	  
->>>>>>> bf288d4... power: quickwakeup: initial driver
+	 
