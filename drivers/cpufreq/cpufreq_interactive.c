@@ -641,8 +641,6 @@ static int cpufreq_interactive_speedchange_task(void *data)
 	cpumask_t tmp_mask;
 	unsigned long flags;
 	struct cpufreq_interactive_policyinfo *ppol;
-	struct cpufreq_interactive_tunables *tunables;
-	bool display_on = is_display_on();
 
 	while (1) {
 		set_current_state(TASK_INTERRUPTIBLE);
@@ -666,7 +664,6 @@ static int cpufreq_interactive_speedchange_task(void *data)
 
 		for_each_cpu(cpu, &tmp_mask) {
 			ppol = per_cpu(polinfo, cpu);
-			tunables = ppol->policy->governor_data;
 			if (!down_read_trylock(&ppol->enable_sem))
 				continue;
 			if (!ppol->governor_enabled) {
@@ -689,6 +686,12 @@ static int cpufreq_interactive_speedchange_task(void *data)
 							    ppol->target_freq,
 							    CPUFREQ_RELATION_H);
 			}
+
+			if (ppol->target_freq != ppol->policy->cur)
+				__cpufreq_driver_target(ppol->policy,
+							ppol->target_freq,
+							CPUFREQ_RELATION_H);
+
 			trace_cpufreq_interactive_setspeed(cpu,
 						     ppol->target_freq,
 						     ppol->policy->cur);
@@ -1267,6 +1270,7 @@ static ssize_t store_use_migration_notif(
 	return -ENODEV;
 }
 
+
 static ssize_t show_powersave_bias(struct cpufreq_interactive_tunables *tunables,
 		char *buf)
 {
@@ -1427,8 +1431,9 @@ static struct attribute *interactive_attributes_gov_sys[] = {
 	&ignore_hispeed_on_notif_gov_sys.attr,
 	&fast_ramp_down_gov_sys.attr,
 	&enable_prediction_gov_sys.attr,
-	&powersave_bias_gov_sys.attr,
+        &powersave_bias_gov_sys.attr,
 	&screen_off_maxfreq_gov_sys.attr,
+
 	NULL,
 };
 
@@ -1459,6 +1464,7 @@ static struct attribute *interactive_attributes_gov_pol[] = {
 	&enable_prediction_gov_pol.attr,
 	&powersave_bias_gov_pol.attr,
 	&screen_off_maxfreq_gov_pol.attr,
+
 	NULL,
 };
 
