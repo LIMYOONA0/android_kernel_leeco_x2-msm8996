@@ -156,9 +156,6 @@ struct cpufreq_interactive_tunables {
 
 	/* Whether to enable prediction or not */
 	bool enable_prediction;
-
-	/* Improves frequency selection for more energy */
-	bool powersave_bias;
 };
 
 /* For cases where we have single governor instance for system */
@@ -1261,7 +1258,6 @@ static ssize_t store_use_migration_notif(
 	return -ENODEV;
 }
 
-
 static ssize_t show_powersave_bias(struct cpufreq_interactive_tunables *tunables,
 		char *buf)
 {
@@ -1280,6 +1276,7 @@ static ssize_t store_powersave_bias(struct cpufreq_interactive_tunables *tunable
 	tunables->powersave_bias = val;
 	return count;
 }
+
 
 /*
  * Create show/store routines
@@ -1335,7 +1332,6 @@ show_store_gov_pol_sys(align_windows);
 show_store_gov_pol_sys(ignore_hispeed_on_notif);
 show_store_gov_pol_sys(fast_ramp_down);
 show_store_gov_pol_sys(enable_prediction);
-show_store_gov_pol_sys(powersave_bias);
 
 #define gov_sys_attr_rw(_name)						\
 static struct global_attr _name##_gov_sys =				\
@@ -1366,7 +1362,6 @@ gov_sys_pol_attr_rw(align_windows);
 gov_sys_pol_attr_rw(ignore_hispeed_on_notif);
 gov_sys_pol_attr_rw(fast_ramp_down);
 gov_sys_pol_attr_rw(enable_prediction);
-gov_sys_pol_attr_rw(powersave_bias);
 
 static struct global_attr boostpulse_gov_sys =
 	__ATTR(boostpulse, 0200, NULL, store_boostpulse_gov_sys);
@@ -1426,7 +1421,7 @@ static struct attribute *interactive_attributes_gov_pol[] = {
 	&ignore_hispeed_on_notif_gov_pol.attr,
 	&fast_ramp_down_gov_pol.attr,
 	&enable_prediction_gov_pol.attr,
-	&powersave_bias_gov_pol.attr,
+        &powersave_bias_gov_pol.attr,
 	&screen_off_maxfreq_gov_pol.attr,
 
 	NULL,
