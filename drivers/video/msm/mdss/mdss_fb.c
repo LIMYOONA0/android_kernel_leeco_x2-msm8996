@@ -72,14 +72,12 @@
 #define BLANK_FLAG_ULP	FB_BLANK_VSYNC_SUSPEND
 #define BLANK_FLAG_LP	FB_BLANK_NORMAL
 
-<<<<<<< HEAD
 #define MDSS_FB_SPEC_CAR_SEQ_CMDLINE_MAX 30
 #define MDSS_FB_TURBO_OLED_FLIP_CHARGEMODE 30
 
 bool flip_chargermode_flag = false;
 char flip_chargermode[MDSS_FB_TURBO_OLED_FLIP_CHARGEMODE];
 char spec_char_seq[MDSS_FB_SPEC_CAR_SEQ_CMDLINE_MAX];
-=======
 #define MDSS_BRIGHT_TO_BL_DIM(out, v) do {\
 			out = (12*v*v+1393*v+3060)/4465;\
 			} while (0)

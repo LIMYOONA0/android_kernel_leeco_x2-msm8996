@@ -415,13 +415,13 @@ static u64 update_load(int cpu)
 		ppol->policy->governor_data;
 	u64 now;
 	u64 now_idle;
-	u64 delta_idle;
-	u64 delta_time;
+	unsigned int delta_idle;
+	unsigned int delta_time;
 	u64 active_time;
 
 	now_idle = get_cpu_idle_time(cpu, &now, tunables->io_is_busy);
-	delta_idle = (now_idle - pcpu->time_in_idle);
-	delta_time = (now - pcpu->time_in_idle_timestamp);
+	delta_idle = (unsigned int)(now_idle - pcpu->time_in_idle);
+	delta_time = (unsigned int)(now - pcpu->time_in_idle_timestamp);
 
 	if (delta_time <= delta_idle)
 		active_time = 0;
@@ -664,24 +664,10 @@ static int cpufreq_interactive_speedchange_task(void *data)
 				continue;
 			}
 
-
-			if (ppol->target_freq != ppol->policy->cur) {
-			    if (tunables->powersave_bias || !display_on)
-				    __cpufreq_driver_target(ppol->policy,
-							    ppol->target_freq,
-							    CPUFREQ_RELATION_C);
-			    else
-				    __cpufreq_driver_target(ppol->policy,
-							    ppol->target_freq,
-							    CPUFREQ_RELATION_H);
-			}
-
-
 			if (ppol->target_freq != ppol->policy->cur)
 				__cpufreq_driver_target(ppol->policy,
 							ppol->target_freq,
 							CPUFREQ_RELATION_H);
-
 			trace_cpufreq_interactive_setspeed(cpu,
 						     ppol->target_freq,
 						     ppol->policy->cur);
@@ -801,7 +787,7 @@ static int cpufreq_interactive_notifier(
 	int cpu;
 	unsigned long flags;
 
-	if (val == CPUFREQ_PRECHANGE) {
+	if (val == CPUFREQ_POSTCHANGE) {
 		ppol = per_cpu(polinfo, freq->cpu);
 		if (!ppol)
 			return 0;
@@ -1107,7 +1093,7 @@ static ssize_t show_boost(struct cpufreq_interactive_tunables *tunables,
 static ssize_t store_boost(struct cpufreq_interactive_tunables *tunables,
 			   const char *buf, size_t count)
 {
-/*	int ret;
+	int ret;
 	unsigned long val;
 
 	ret = kstrtoul(buf, 0, &val);
@@ -1124,7 +1110,7 @@ static ssize_t store_boost(struct cpufreq_interactive_tunables *tunables,
 		tunables->boostpulse_endtime = ktime_to_us(ktime_get());
 		trace_cpufreq_interactive_unboost("off");
 	}
-*/
+
 	return count;
 }
 
@@ -1260,7 +1246,6 @@ static ssize_t store_use_migration_notif(
 	return -ENODEV;
 }
 
-
 /*
  * Create show/store routines
  * - sys: One governor instance for complete SYSTEM
@@ -1372,10 +1357,6 @@ static struct attribute *interactive_attributes_gov_sys[] = {
 	&ignore_hispeed_on_notif_gov_sys.attr,
 	&fast_ramp_down_gov_sys.attr,
 	&enable_prediction_gov_sys.attr,
-        &powersave_bias_gov_sys.attr,
-	&screen_off_maxfreq_gov_sys.attr,
-	&powersave_bias_gov_sys.attr,
-
 	NULL,
 };
 
@@ -1404,10 +1385,7 @@ static struct attribute *interactive_attributes_gov_pol[] = {
 	&ignore_hispeed_on_notif_gov_pol.attr,
 	&fast_ramp_down_gov_pol.attr,
 	&enable_prediction_gov_pol.attr,
-        &powersave_bias_gov_pol.attr,
-	&screen_off_maxfreq_gov_pol.attr,
-
-        NULL,
+	NULL,
 };
 
 static struct attribute_group interactive_attr_group_gov_pol = {
@@ -1620,6 +1598,8 @@ static int cpufreq_governor_interactive(struct cpufreq_policy *policy,
 		mutex_lock(&gov_lock);
 
 		freq_table = cpufreq_frequency_get_table(policy->cpu);
+		if (!tunables->hispeed_freq)
+			tunables->hispeed_freq = policy->max;
 
 		ppol = per_cpu(polinfo, policy->cpu);
 		ppol->policy = policy;
