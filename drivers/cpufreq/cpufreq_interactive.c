@@ -664,6 +664,7 @@ static int cpufreq_interactive_speedchange_task(void *data)
 				continue;
 			}
 
+
 			if (ppol->target_freq != ppol->policy->cur) {
 			    if (tunables->powersave_bias || !display_on)
 				    __cpufreq_driver_target(ppol->policy,
@@ -674,6 +675,7 @@ static int cpufreq_interactive_speedchange_task(void *data)
 							    ppol->target_freq,
 							    CPUFREQ_RELATION_H);
 			}
+
 
 			if (ppol->target_freq != ppol->policy->cur)
 				__cpufreq_driver_target(ppol->policy,
@@ -1424,7 +1426,7 @@ static struct attribute *interactive_attributes_gov_pol[] = {
         &powersave_bias_gov_pol.attr,
 	&screen_off_maxfreq_gov_pol.attr,
 
-	NULL,
+        NULL,
 };
 
 static struct attribute_group interactive_attr_group_gov_pol = {
