@@ -22,7 +22,7 @@
 #include <linux/qpnp/pwm.h>
 #include <linux/err.h>
 #include <linux/string.h>
-#include <linux/display_state.h>
+
 #include "mdss_dsi.h"
 #include "mdss_dba_utils.h"
 #include "mdss_livedisplay.h"
@@ -35,7 +35,6 @@
 
 DEFINE_LED_TRIGGER(bl_led_trigger);
 
-<<<<<<< HEAD
 int panel_rst_gpio = -1;
 bool panel_rst_high_flag = 0;
 
@@ -43,15 +42,6 @@ bool panel_rst_high_flag = 0;
 struct dsi_panel_cmds bist_cmds;
 bool bist_cmds_on = false;
 #endif
-=======
-bool display_on = true;
-
-bool is_display_on()
-{
-	return display_on;
-}
-
->>>>>>> 68e80c4... display: add a simple api to query the display state (on/off) at any point in time
 void mdss_dsi_panel_pwm_cfg(struct mdss_dsi_ctrl_pdata *ctrl)
 {
 	if (ctrl->pwm_pmi)
@@ -749,15 +739,6 @@ static int mdss_dsi_panel_on(struct mdss_panel_data *pdata)
 		return -EINVAL;
 	}
 
-<<<<<<< HEAD
-=======
-#ifdef CONFIG_POWERSUSPEND
-	set_power_suspend_state_panel_hook(POWER_SUSPEND_INACTIVE);
-#endif
-	
-	display_on = true;
-
->>>>>>> 68e80c4... display: add a simple api to query the display state (on/off) at any point in time
 	pinfo = &pdata->panel_info;
 	ctrl = container_of(pdata, struct mdss_dsi_ctrl_pdata,
 				panel_data);
@@ -875,8 +856,6 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 		mdss_dba_utils_video_off(pinfo->dba_data);
 		mdss_dba_utils_hdcp_enable(pinfo->dba_data, false);
 	}
-
-	display_on = false;
 
 end:
 	pr_debug("%s:-\n", __func__);
