@@ -581,7 +581,6 @@ config QPNP_MISC
 	  and the driver provides an API to check if this interrupt
 	  is available on the current PMIC chip.
 
-<<<<<<< HEAD
 config IR_MAXQ616
 	tristate "IR maxq616 remote support"
 	depends on OF_GPIO
